@@ -32,8 +32,11 @@ app.get('/accounts/:id', async (req, res, next) => {
     const events = await loadEvents(req.params.id);
 
     /**
-     * TODO: Create a new function that takes the returned events array
-     * loop through and returns the balance of the account
+     * TODO:
+     * balance - loop through and return the balance of the account
+     * isOverdrawn - if account is in credit return true else false
+     * date format - format dates to milliseconds
+     * transactions - create new array with formatted transactions
      **/
 
     const account: IBankAccount = {
