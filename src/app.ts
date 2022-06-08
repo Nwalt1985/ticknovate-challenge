@@ -1,14 +1,14 @@
-import express from 'express'
-import { expressErrorHandler } from './lib/errorHandling'
-import { loadEvents } from './lib/events'
-import { IBankAccount } from './types'
+import express from 'express';
+import { expressErrorHandler } from './lib/errorHandling';
+import { loadEvents } from './lib/events';
+import { IBankAccount } from './types';
 
-export const app = express()
+export const app = express();
 
-app.use(express.json())
+app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.contentType('text/html')
+  res.contentType('text/html');
   res.send(`
     <style>
       html { font-family: sans-serif; }
@@ -24,23 +24,23 @@ app.get('/', (req, res) => {
     changing an account owner's name. See the README for more information.</p>
     
     <p>Good luck!</p>
-  `)
-})
+  `);
+});
 
 // TODO: Complete the implementation of this route!
 app.get('/accounts/:id', async (req, res, next) => {
   try {
     // This `loadEvents` function currently just returns an empty array.
     // Take a look at the function and complete the implementation.
-    const events = await loadEvents(req.params.id)
+    const events = await loadEvents(req.params.id);
 
     // @ts-expect-error: Derive the state of the account from `events`
-    const account: IBankAccount = { message: 'Not yet implemented.' }
+    const account: IBankAccount = { message: 'Not yet implemented.' };
 
-    res.json(account)
+    res.json(account);
   } catch (err) {
-    next(err)
+    next(err);
   }
-})
+});
 
-app.use(expressErrorHandler)
+app.use(expressErrorHandler);

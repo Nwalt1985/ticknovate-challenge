@@ -1,7 +1,8 @@
-import fs from 'fs/promises'
-import path from 'path'
-import { AppError } from './errorHandling'
-import type { BankAccountEvent } from '../types'
+import fs from 'fs/promises';
+import path from 'path';
+import { AppError } from './errorHandling';
+import type { BankAccountEvent } from '../types';
+import { StatusCodes } from 'http-status-codes';
 
 /**
  * Load events for the given `accountId`.
@@ -17,7 +18,17 @@ import type { BankAccountEvent } from '../types'
 export async function loadEvents(
   accountId: string
 ): Promise<BankAccountEvent[]> {
-  return []
+  try {
+    const directoryPath = path.join(__dirname, `../../events/${accountId}`);
+
+    const accountData: BankAccountEvent[] = (await fs.readdir(directoryPath))
+      .filter((name) => path.extname(name) === '.json')
+      .map((name) => require(path.join(directoryPath, name)));
+
+    return accountData;
+  } catch (err) {
+    throw new AppError(StatusCodes.INTERNAL_SERVER_ERROR, 'Account not found');
+  }
 }
 
 /**
@@ -31,12 +42,12 @@ export async function saveEvents(events: BankAccountEvent[]) {
         '../../events',
         event.accountId,
         `${event.position}.json`
-      )
-      console.log('Writing new event to', filepath)
-      await fs.writeFile(filepath, JSON.stringify(event, null, 2), {
+      );
+      console.log('Writing new event to', filepath);
+      fs.writeFile(filepath, JSON.stringify(event, null, 2), {
         // Fail if the file already exists
         flag: 'wx',
-      })
+      });
     })
-  )
+  );
 }
