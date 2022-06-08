@@ -27,15 +27,30 @@ app.get('/', (req, res) => {
   `);
 });
 
-// TODO: Complete the implementation of this route!
 app.get('/accounts/:id', async (req, res, next) => {
   try {
-    // This `loadEvents` function currently just returns an empty array.
-    // Take a look at the function and complete the implementation.
     const events = await loadEvents(req.params.id);
 
-    // @ts-expect-error: Derive the state of the account from `events`
-    const account: IBankAccount = { message: 'Not yet implemented.' };
+    /**
+     * TODO: Create a new function that takes the returned events array
+     * loop through and returns the balance of the account
+     **/
+
+    const account: IBankAccount = {
+      status: 'open',
+      accountId: '',
+      ownerName: '',
+      balance: 0,
+      isOverdrawn: true || false,
+      openedAt: Date.now(), // replace with timestamp
+      transactions: [
+        {
+          type: 'debit' || 'credit',
+          value: 0,
+          timestamp: Date.now(), // replace
+        },
+      ],
+    };
 
     res.json(account);
   } catch (err) {
