@@ -1,5 +1,3 @@
-import { type } from 'os';
-
 /**
  * A bank account, the state of which is fully derived from
  * an array of `BankAccountEvent` objects.
@@ -36,7 +34,7 @@ export interface IBankAccount {
   openedAt: number;
 }
 
-interface IBankAccountTransaction {
+export interface IBankAccountTransaction {
   /**
    * The type of the transaction.
    */
@@ -60,7 +58,9 @@ interface IBankAccountTransaction {
  * This is what gets saved / loaded from disk, and can be used to build up
  * an aggregate view of the data.
  */
-export type BankAccountEvent = BankAccountEventBase & IBankAccountEventShared;
+export type BankAccountEvent = BankAccountEventBase &
+  IBankAccountEventShared &
+  AccountUpdateEventBase;
 
 /**
  * A "bank account" event.
@@ -71,7 +71,8 @@ export type BankAccountEvent = BankAccountEventBase & IBankAccountEventShared;
 export type BankAccountEventBase =
   | IAccountOpenedEventBase
   | IMoneyDebitedEventBase
-  | IMoneyCreditedEventBase;
+  | IMoneyCreditedEventBase
+  | AccountUpdateEventBase;
 
 interface IAccountOpenedEventBase {
   type: 'AccountOpened';
@@ -86,6 +87,14 @@ interface IMoneyDebitedEventBase {
 interface IMoneyCreditedEventBase {
   type: 'MoneyCredited';
   value: number;
+}
+
+interface AccountUpdateEventBase {
+  type: string;
+  accountId: string;
+  ownerName: string;
+  time: string;
+  position: number;
 }
 
 export interface IBankAccountEventShared {
@@ -104,19 +113,7 @@ export interface FormattedEvent {
   position: number;
   time: string;
 }
-
-export interface ReturnedAccount {
-  status: string;
-  accountId: string;
+export interface UpdateUserRequest {
+  account: string;
   ownerName: string;
-  balance: number;
-  isOverdrawn: boolean;
-  openedAt: number;
-  transactions: Transactions[];
-}
-
-export interface Transactions {
-  type: string;
-  value: number;
-  timestamp: number;
 }

@@ -2,6 +2,7 @@ import type {
   EventTransaction,
   FormattedEvent,
   IBankAccountEventShared,
+  IBankAccountTransaction,
 } from '../types';
 import { cloneDeep } from 'lodash';
 
@@ -49,5 +50,5 @@ export function formatTransactions(event: FormattedEvent[]) {
     type: obj.type === 'MoneyDebited' ? 'debit' : 'credit',
     value: obj.value || 0,
     timestamp: obj.time,
-  }));
+  })) as unknown as IBankAccountTransaction[];
 }
