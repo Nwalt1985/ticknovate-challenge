@@ -1,7 +1,19 @@
 import express from 'express';
 import { expressErrorHandler } from './lib/errorHandling';
 import { loadEvents } from './lib/events';
-import { IBankAccount } from './types';
+import {
+  BankAccountEventBase,
+  IBankAccount,
+  EventTransaction,
+  FormattedEvent,
+  ReturnedAccount,
+  Transactions,
+} from './types';
+import {
+  formatDateToMillisecond,
+  getAccountBalance,
+  formatTransactions,
+} from './helpers';
 
 export const app = express();
 
@@ -30,31 +42,21 @@ app.get('/', (req, res) => {
 app.get('/accounts/:id', async (req, res, next) => {
   try {
     const events = await loadEvents(req.params.id);
+    const balance = getAccountBalance(events as EventTransaction[]);
+    const isOverdrawn = balance < 0 ? true : false;
+    const eventFormattedDates = formatDateToMillisecond(events);
+    const transactions = formatTransactions(
+      eventFormattedDates
+    ) as unknown as Transactions[];
 
-    /**
-     * TODO: helper functions
-     * balance - loop through and return the balance of the account
-     * isOverdrawn - if account is in credit return true else false
-     * date format - format dates to milliseconds
-     * transactions - create new array with formatted transactions
-     *
-     * create tests for new methods.
-     **/
-
-    const account: IBankAccount = {
+    const account: ReturnedAccount = {
       status: 'open',
-      accountId: '',
-      ownerName: '',
-      balance: 0,
-      isOverdrawn: true || false,
-      openedAt: Date.now(), // replace with timestamp
-      transactions: [
-        {
-          type: 'debit' || 'credit',
-          value: 0,
-          timestamp: Date.now(), // replace
-        },
-      ],
+      accountId: eventFormattedDates[0].accountId,
+      ownerName: eventFormattedDates[0].ownerName,
+      balance,
+      isOverdrawn,
+      openedAt: parseInt(eventFormattedDates[0].time),
+      transactions,
     };
 
     res.json(account);
